@@ -13,18 +13,13 @@ window.onload = () => {
         scale: {
             mode: Phaser.Scale.FIT,
             autoCenter: Phaser.Scale.CENTER_BOTH,
-            width: 1728,
-            height: 992,
+            width: 1920,
+            height: 1080,
         },
         pixelArt: true,
         backgroundColor: "#808080",
         physics: {
             default: "arcade",
-            arcade: {
-                gravity: {
-                    y: 0
-                },
-            }
         },
         scene: [Bootloader, Level1]
     }
