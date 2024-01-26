@@ -1,4 +1,4 @@
-
+import Phaser from "phaser"
 
 let settings;
 let config;
@@ -18,6 +18,6 @@ export default class Level1 extends Phaser.Scene {
     }
 
     update(time, delta) {
-        
+
     } 
 }

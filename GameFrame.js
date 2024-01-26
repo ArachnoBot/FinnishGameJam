@@ -1,4 +1,5 @@
-
+import Phaser from "phaser"
+import Level1 from "./Levels/Level1";
 
 let game;
 
@@ -25,7 +26,7 @@ window.onload = () => {
                 },
             }
         },
-        scene: [Bootloader]
+        scene: [Bootloader, Level1]
     }
     game = new Phaser.Game(gameConfig);
     window.focus();
