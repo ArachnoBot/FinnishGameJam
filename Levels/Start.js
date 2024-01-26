@@ -1,5 +1,5 @@
 import Phaser from "phaser"
-import startImg from "../Assets/start.png"
+import startImg from "../Assets/Start/start.png"
 
 let settings;
 let config;
