@@ -1,5 +1,6 @@
 import Phaser from "phaser"
 import Start from "./Levels/Start";
+import Level1 from "./Levels/Level1";
 
 let game;
 
@@ -21,7 +22,7 @@ window.onload = () => {
         physics: {
             default: "arcade",
         },
-        scene: [Bootloader, Start]
+        scene: [Bootloader, Start, Level1]
     }
     game = new Phaser.Game(gameConfig);
     window.focus();

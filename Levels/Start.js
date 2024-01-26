@@ -23,7 +23,7 @@ export default class Start extends Phaser.Scene {
       //  Moves the image anchor to the middle, so it centers inside the game properly
       image.setScale(0.2)
 
-      image.on("pointerdown", this.handleStartClick)
+      image.on("pointerdown", this.handleStartClick, this)
     }
 
     update(time, delta) {
@@ -32,5 +32,6 @@ export default class Start extends Phaser.Scene {
 
     handleStartClick() {
       console.log("start clicked")
+      this.scene.start("Level1", {config, settings});
     }
 }
