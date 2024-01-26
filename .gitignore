@@ -1,5 +1,1 @@
 node_modules
-!.parcel-cache/
-.parcel-cache/**
-!.parcel-cache/bspwm
-.parcel-cache
