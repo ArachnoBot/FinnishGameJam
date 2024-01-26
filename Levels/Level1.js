@@ -18,18 +18,6 @@ export default class Level1 extends Phaser.Scene {
     }
 
     update(time, delta) {
-        if (this.soldier.y > config.height || this.soldier.y < 0) {
-            this.soldierDead = true;
-        }
-        if (!this.soldierDead) {
-            this.soldierController(delta);
-            this.checkSoldierLocation();
-        } else {
-            this.soldier.body.velocity.x *= 0.95;
-            this.soldierDeadTimer += delta;
-            if (this.soldierDeadTimer > settings.restartTime) {
-                this.scene.start();
-            }
-        }
+        
     } 
 }
