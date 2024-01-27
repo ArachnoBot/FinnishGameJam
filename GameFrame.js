@@ -7,7 +7,7 @@ let game;
 const settings = {
   woolSizeX: 50,
   woolSizeY: 50,
-  basketSizeX: 510,
+  basketSizeX: 400,
   basketSizeY: 50,
 }
 
