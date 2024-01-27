@@ -23,6 +23,8 @@ export default class Level1 extends Phaser.Scene {
   create(data) {
     config = data.config
     settings = data.settings
+    let woolCaught = 0
+    this.finished = false
 
     this.keyLeft = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
     this.keyRight = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
@@ -30,16 +32,15 @@ export default class Level1 extends Phaser.Scene {
     this.add.image(config.width / 2, config.height / 2, "bg").setDepth(0)
     this.physics.world.setBounds(0, 0, config.width, config.height);
     this.basket = this.createBasket()
-    let woolCaught = 0
     let woolText = this.add.text(config.width - 600, 16, 'Wool caught: 0', { fontFamily: "Georgia", fontSize: 80, fill: '#ffffff' });
-    this.playSheepAnim(this)
+    this.playSheepAnim()
 
     this.woolPieces = this.physics.add.group({
       classType: WoolPiece,
       runChildUpdate: true
     })
 
-    this.triggerTimer = this.time.addEvent({
+    this.woolTrigger = this.time.addEvent({
       callback: this.spawnWool,
       callbackScope: this,
       delay: 1000,
@@ -51,10 +52,9 @@ export default class Level1 extends Phaser.Scene {
       this.basket,
       (basket, woolPiece) => {
         woolCaught += 1
-        if (woolCaught <= 5) {
-          woolText.text = 'Wool caught: ' + woolCaught.toString()
-        } else {
-          this.triggerTimer.delay = 50
+        woolText.text = 'Wool caught: ' + woolCaught.toString()
+        if (woolCaught >= 1) {
+          this.triggerEnding()
         }
         woolPiece.destroy()
       }
@@ -62,7 +62,9 @@ export default class Level1 extends Phaser.Scene {
   }
 
   update(time, delta) {
-    this.basketController(delta)
+    if (!this.finished) {
+      this.basketController(delta)
+    }
   }
 
   spawnWool() {
@@ -89,11 +91,11 @@ export default class Level1 extends Phaser.Scene {
     }
   }
 
-  playSheepAnim(ref) {
+  playSheepAnim() {
     let sheep = this.add.sprite(0, 0, "sheepAnim");
     sheep.setOrigin(0,0)
     sheep.setDepth(2)
-    ref.anims.create({
+    this.anims.create({
       key: "sheepAnim",
       frames: this.anims.generateFrameNumbers("sheepSheet", {start: 0, end : 1}),
       frameRate: 4,
@@ -106,12 +108,19 @@ export default class Level1 extends Phaser.Scene {
     const basket = this.physics.add.sprite(config.width/2, config.height-200, "basket");
     basket.setDrag(600)
     basket.setSize(settings.basketSizeX, settings.basketSizeY)
+    basket.setSize(20,50)
     basket.setOffset(100,250)
     basket.setCollideWorldBounds(true);
     basket.setImmovable(true)
     basket.setDepth(4)
     return basket
-}
+  }
+
+  triggerEnding() {
+    this.woolTrigger.delay = 50
+    this.add.image(config.width / 2, config.height / 2, "woolPiece").setDepth(5).setScale(10)
+    this.finished = true
+  }
 }
 
 
