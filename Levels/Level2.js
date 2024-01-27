@@ -28,11 +28,10 @@ export default class Level2 extends Phaser.Scene {
       settings = data.settings
       this.barMaxWidth = 800
       this.lastSlot = 0
-      this.playTime = 25
+      this.playTime = 30
       this.finished = false
       this.ballArray = []
-      this.ballVelocity = 800
-      this.pressDelay = (this.ballVelocity/800)*1350
+      this.pressDelay = 800
 
       this.keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
       this.keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
@@ -45,15 +44,14 @@ export default class Level2 extends Phaser.Scene {
       this.keyS.on("down", () => {this.handleKeystroke("down")})
 
       this.add.image(config.width / 2, config.height / 2, "bg").setDepth(0)
-      this.add
       this.outlineGraphics = this.add.graphics(2).setDepth(2)
       this.barGraphics = this.add.graphics().setDepth(1)
 
       this.outlineGraphics.lineStyle(6, 0xaaaaaa)
-      this.bar = this.outlineGraphics.strokeRoundedRect(1050, 40, 800, 80)
+      this.outlineGraphics.strokeRoundedRect(1050, 40, 800, 80)
 
       this.createBallAnims()
-      this.playKnitAnim()
+      this.knitter = this.playKnitAnim()
 
       this.yarnBalls = this.physics.add.group({
         classType: YarnBall,
@@ -66,32 +64,45 @@ export default class Level2 extends Phaser.Scene {
         delay: 1000,
         loop: true
       })
-
-      setTimeout(() => {
-        this.ballTrigger.delay = 800
-        this.ballVelocity = 1000
-        this.pressDelay = (this.ballVelocity/800)*1350
-        console.log("done")
-      }, 5000)
-      
-      setTimeout(() => {
-        console.log("done2")
-        this.ballTrigger.delay = 500
-        this.ballVelocity = 1200
-        this.pressDelay = (this.ballVelocity/1200)*1350
-      }, 10000)
     }
 
-    update(time, delta) {      
-      if (!this.finished && this.playTime > 800) {
-        this.triggerEnding()
+    update(time, delta) {
+      if (this.finished) {
+        return
+      }
+
+      if (this.playTime < 200) {
+        if (this.ballTrigger.delay != 1000) { 
+          this.ballTrigger.delay = 1000
+          console.log("low diff")
+        }
+        if (this.playTime >= 30) {
+          this.playTime -= 0.2
+        }
       } 
-      else if (!this.finished && this.playTime <= 800) {
+      else if (this.playTime < 400) {
+        if (this.ballTrigger.delay != 700) { 
+          this.ballTrigger.delay = 700
+          console.log("medium diff")
+        }
+        this.playTime -= 0.3
+      }
+      else if (this.playTime < 800) {
+        if (this.ballTrigger.delay != 500) { 
+          this.ballTrigger.delay = 500
+          console.log("high diff")
+        }
+        this.playTime -= 0.5
+      }
+      
+      if (this.playTime > 800) {
+        this.triggerEnding()
+        this.barGraphics.fillRoundedRect(1050, 40, this.barMaxWidth, 78)
+      } 
+      else if (this.playTime <= 800 ) {
         this.barGraphics.clear()
-        //console.log(this.playTime)
         this.barGraphics.fillStyle("0x34ebdf", 1)
-        this.bar = this.barGraphics.fillRoundedRect(1050, 40, this.playTime, 78)
-        this.playTime += 0.2
+        this.barGraphics.fillRoundedRect(1050, 40, this.playTime, 78)
       }
     }
 
@@ -99,12 +110,18 @@ export default class Level2 extends Phaser.Scene {
       const ballArray = this.yarnBalls.getChildren()
       if (ballArray.length > 0) {
         const ball = ballArray[0]
-        const delay = new Date() - ball.initTime
-        console.log(Math.abs(delay -this.pressDelay), ball.slot)
-        if (ball.slot == slot && Math.abs(delay - this.pressDelay) <= settings.maxDelay) {
-          this.playTime += 5
+        const timing = Math.abs(new Date() - ball.initTime - this.pressDelay)
+        console.log(timing, ball.slot)
+        if (ball.slot == slot && timing <= settings.maxDelay) {
+          this.playTime += Math.round((100-timing)*5.5)
         } else {
-          this.playTime -= 5
+          if (this.playTime >= 80) {
+            this.playTime -= 50
+          }
+          this.knitter.anims.pause()
+          setTimeout(() => {
+            this.knitter.anims.resume()
+          }, 800)
         }
         ball.destroy()
       }
@@ -137,12 +154,17 @@ export default class Level2 extends Phaser.Scene {
       })
     }
 
-    spawnBall(velocity) {
-      let slot = Math.round(Math.random()*3)
-      while (slot == this.lastSlot) {
-        slot = Math.round(Math.random()*3)
+    spawnBall(localSlot) {
+      let slot = null
+      if (localSlot != null) {
+        slot = localSlot
+      } else {
+        slot = Math.floor(Math.random()*4)
+        while (slot == this.lastSlot) {
+          slot = Math.round(Math.random()*3)
+        }
+        this.lastSlot = slot
       }
-      this.lastSlot = slot
 
       let x = 0
       let animStr = ""
@@ -165,9 +187,9 @@ export default class Level2 extends Phaser.Scene {
       }
       let yarnBall = this.yarnBalls.get()
       if (yarnBall) {
-        yarnBall.setPosition(x, -200)
+        yarnBall.setPosition(x, -140)
         yarnBall.setScale(1)
-        yarnBall.body.setVelocity(0, this.ballVelocity)
+        yarnBall.body.setVelocity(0, 1200)
         yarnBall.slot = slots[slot]
         yarnBall.anims.play(animStr)
       }
@@ -176,7 +198,7 @@ export default class Level2 extends Phaser.Scene {
     playKnitAnim() {
       let knitter = this.add.sprite();
       knitter.setOrigin(0,0)
-      knitter.setPosition(1100, 300)
+      knitter.setPosition(1100, 200)
       knitter.setDepth(2)
       this.anims.create({
         key: "knitAnim",
@@ -185,11 +207,34 @@ export default class Level2 extends Phaser.Scene {
         repeat: -1
       })
       knitter.anims.play("knitAnim")
+      return knitter
     }
 
-    triggerEnding() {
+    delay = (delayInms) => {
+      return new Promise(resolve => setTimeout(resolve, delayInms));
+    };
 
+    async triggerEnding() {
+      this.ballTrigger.destroy()
       this.finished = true
+      this.reverse = false
+      let slot = 0
+      while(true) {
+        await this.delay(100)
+        this.spawnBall(slot)
+        if (slot > 2) {
+          this.reverse = true
+        } 
+        else if (slot == 0) {
+          this.reverse = false
+        }
+
+        if (this.reverse) {
+          slot -= 1
+        } else {
+          slot += 1
+        }
+      }
     }
 }
 
@@ -197,7 +242,7 @@ export default class Level2 extends Phaser.Scene {
 class YarnBall extends Phaser.Physics.Arcade.Sprite {
   constructor (scene) {
     super(scene, 0, 0, "YarnBall")
-    this.lifespan = 1700
+    this.lifespan = 1100
     this.setScale(1.5)
     this.initTime = new Date()
     this.slot = ""
