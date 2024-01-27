@@ -1,6 +1,6 @@
 import Phaser from "phaser"
 import woolPath from "../Assets/Level1/wool.png"
-import bgPath from "../Assets/Level1/level1Background.png"
+import bgPath from "../Assets/Level1/background.png"
 import basketPath from "../Assets/Level1/basket.png"
 import sheepPath from "../Assets/Level1/sheepSheet.png"
 
@@ -30,6 +30,9 @@ export default class Level1 extends Phaser.Scene {
     this.add.image(config.width / 2, config.height / 2, "bg").setDepth(0)
     this.physics.world.setBounds(0, 0, config.width, config.height);
     this.basket = this.createBasket()
+    let woolCaught = 0
+    let woolText = this.add.text(config.width - 600, 16, 'Wool caught: 0', { fontFamily: "Georgia", fontSize: 80, fill: '#ffffff' });
+    this.playSheepAnim(this)
 
     this.woolPieces = this.physics.add.group({
       classType: WoolPiece,
@@ -47,12 +50,15 @@ export default class Level1 extends Phaser.Scene {
       this.woolPieces,
       this.basket,
       (basket, woolPiece) => {
-        console.log("wool caught")
+        woolCaught += 1
+        if (woolCaught <= 5) {
+          woolText.text = 'Wool caught: ' + woolCaught.toString()
+        } else {
+          this.triggerTimer.delay = 50
+        }
         woolPiece.destroy()
       }
     );
-
-    this.playSheepAnim(this)
   }
 
   update(time, delta) {
@@ -103,7 +109,7 @@ export default class Level1 extends Phaser.Scene {
     basket.setOffset(100,250)
     basket.setCollideWorldBounds(true);
     basket.setImmovable(true)
-    basket.setDepth(3)
+    basket.setDepth(4)
     return basket
 }
 }
@@ -112,7 +118,7 @@ export default class Level1 extends Phaser.Scene {
 class WoolPiece extends Phaser.Physics.Arcade.Sprite {
   constructor (scene) {
     super(scene, 0, 0, "woolPiece")
-    this.lifespan = 15000
+    this.lifespan = 5000
     this.currentRotation = 0
     this.setScale(1.5)
   }
