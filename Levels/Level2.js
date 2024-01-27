@@ -26,10 +26,11 @@ export default class Level2 extends Phaser.Scene {
       settings = data.settings
       this.barMaxWidth = 800
       this.lastSlot = 0
-      this.pressDelay = 1350
       this.playTime = 25
       this.finished = false
       this.ballArray = []
+      this.ballVelocity = 800
+      this.pressDelay = (this.ballVelocity/800)*1350
 
       this.keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
       this.keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
@@ -48,6 +49,8 @@ export default class Level2 extends Phaser.Scene {
       this.outlineGraphics.lineStyle(6, 0xaaaaaa)
       this.bar = this.outlineGraphics.strokeRoundedRect(1050, 40, 800, 80)
 
+      this.createBallAnims()
+
       this.yarnBalls = this.physics.add.group({
         classType: YarnBall,
         runChildUpdate: true
@@ -60,7 +63,19 @@ export default class Level2 extends Phaser.Scene {
         loop: true
       })
 
-      this.createBallAnims()      
+      setTimeout(() => {
+        this.ballTrigger.delay = 800
+        this.ballVelocity = 1000
+        this.pressDelay = (this.ballVelocity/800)*1350
+        console.log("done")
+      }, 5000)
+      
+      setTimeout(() => {
+        console.log("done2")
+        this.ballTrigger.delay = 500
+        this.ballVelocity = 1200
+        this.pressDelay = (this.ballVelocity/1200)*1350
+      }, 10000)
     }
 
     update(time, delta) {      
@@ -72,24 +87,22 @@ export default class Level2 extends Phaser.Scene {
         //console.log(this.playTime)
         this.barGraphics.fillStyle("0x34ebdf", 1)
         this.bar = this.barGraphics.fillRoundedRect(1050, 40, this.playTime, 78)
-        this.playTime += 5
+        this.playTime += 0.2
       }
     }
 
-    async wait(t) {
-      setTimeout(() => {}, t)
-    }
-
     handleKeystroke(slot) {
-      if (this.ballArray.length > 0) {
-        const ball = this.ballArray[0]
+      const ballArray = this.yarnBalls.getChildren()
+      if (ballArray.length > 0) {
+        const ball = ballArray[0]
         const delay = new Date() - ball.initTime
         console.log(Math.abs(delay -this.pressDelay), ball.slot)
         if (ball.slot == slot && Math.abs(delay - this.pressDelay) <= settings.maxDelay) {
-          console.log("good shit")
+          this.playTime += 5
+        } else {
+          this.playTime -= 5
         }
         ball.destroy()
-        this.ballArray.shift()
       }
     }
 
@@ -120,7 +133,7 @@ export default class Level2 extends Phaser.Scene {
       })
     }
 
-    spawnBall() {
+    spawnBall(velocity) {
       let slot = Math.round(Math.random()*3)
       while (slot == this.lastSlot) {
         slot = Math.round(Math.random()*3)
@@ -150,11 +163,10 @@ export default class Level2 extends Phaser.Scene {
       if (yarnBall) {
         yarnBall.setPosition(x, -200)
         yarnBall.setScale(1)
-        yarnBall.body.setVelocity(0, 800)
+        yarnBall.body.setVelocity(0, this.ballVelocity)
         yarnBall.slot = slots[slot]
         yarnBall.anims.play(animStr)
       }
-      this.ballArray.push(yarnBall)
     }
 
     triggerEnding() {
@@ -167,7 +179,7 @@ export default class Level2 extends Phaser.Scene {
 class YarnBall extends Phaser.Physics.Arcade.Sprite {
   constructor (scene) {
     super(scene, 0, 0, "YarnBall")
-    this.lifespan = 3000
+    this.lifespan = 1700
     this.setScale(1.5)
     this.initTime = new Date()
     this.slot = ""
@@ -179,8 +191,7 @@ class YarnBall extends Phaser.Physics.Arcade.Sprite {
     
     if (this.lifespan <= 0) {
       //console.log("ball destroyed")
-      this.ballArray
-      this.destroy();
+      this.destroy()
     }
   }
 }
