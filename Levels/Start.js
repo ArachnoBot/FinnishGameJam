@@ -20,7 +20,6 @@ export default class Start extends Phaser.Scene {
 
       const image = this.add.sprite(config.width/2, config.height/2, 'start').setInteractive()
 
-      //  Moves the image anchor to the middle, so it centers inside the game properly
       image.setScale(0.2)
 
       image.on("pointerdown", this.handleStartClick, this)
