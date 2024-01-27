@@ -10,6 +10,7 @@ const settings = {
   woolSizeY: 50,
   basketSizeX: 300,
   basketSizeY: 50,
+  maxDelay: 100
 }
 
 window.onload = () => {
