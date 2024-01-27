@@ -31,9 +31,12 @@ export default class Level1 extends Phaser.Scene {
 
     this.add.image(config.width / 2, config.height / 2, "bg").setDepth(0)
     this.physics.world.setBounds(0, 0, config.width, config.height);
-    this.basket = this.createBasket()
     let woolText = this.add.text(config.width - 600, 16, 'Wool caught: 0', { fontFamily: "Georgia", fontSize: 80, fill: '#ffffff' });
     this.playSheepAnim()
+
+    this.basket = this.createBasket()
+    this.hitbox1 = this.createHitbox(this.basket.body.position)
+    this.hitbox2 = this.createHitbox(this.basket.body.position)
 
     this.woolPieces = this.physics.add.group({
       classType: WoolPiece,
@@ -53,11 +56,21 @@ export default class Level1 extends Phaser.Scene {
       (basket, woolPiece) => {
         woolCaught += 1
         woolText.text = 'Wool caught: ' + woolCaught.toString()
-        if (woolCaught >= 1) {
+        if (woolCaught >= 10) {
           this.triggerEnding()
         }
         woolPiece.destroy()
       }
+    );
+
+    this.physics.add.collider(
+      this.woolPieces,
+      this.hitbox1,
+    );
+
+    this.physics.add.collider(
+      this.woolPieces,
+      this.hitbox2,
     );
   }
 
@@ -65,6 +78,10 @@ export default class Level1 extends Phaser.Scene {
     if (!this.finished) {
       this.basketController(delta)
     }
+    const newPosX = this.basket.body.position.x
+    console.log(newPosX)
+    this.hitbox1.setPosition(newPosX - 50, 940)
+    this.hitbox2.setPosition(newPosX + 360, 940)
   }
 
   spawnWool() {
@@ -76,6 +93,7 @@ export default class Level1 extends Phaser.Scene {
       woolPiece.body.gravity.y = 500
       woolPiece.body.setVelocity(velocityX,-700)
       woolPiece.setDepth(1)
+      woolPiece.setBounce(0.5)
       setTimeout(() => {
         woolPiece.setDepth(3)
       }, 1000)
@@ -108,12 +126,19 @@ export default class Level1 extends Phaser.Scene {
     const basket = this.physics.add.sprite(config.width/2, config.height-200, "basket");
     basket.setDrag(600)
     basket.setSize(settings.basketSizeX, settings.basketSizeY)
-    basket.setSize(20,50)
-    basket.setOffset(100,250)
+    basket.setOffset(150,250)
     basket.setCollideWorldBounds(true);
     basket.setImmovable(true)
     basket.setDepth(4)
+
     return basket
+  }
+
+  createHitbox(pos) {
+    const hitbox = this.physics.add.sprite(pos.x, pos.y);
+    hitbox.setSize(50,150)
+    hitbox.setImmovable(true)
+    return hitbox
   }
 
   triggerEnding() {

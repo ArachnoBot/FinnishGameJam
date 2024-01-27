@@ -19,9 +19,7 @@ export default class Start extends Phaser.Scene {
       settings = data.settings
 
       const image = this.add.sprite(config.width/2, config.height/2, 'start').setInteractive()
-
       image.setScale(0.2)
-
       image.on("pointerdown", this.handleStartClick, this)
     }
 

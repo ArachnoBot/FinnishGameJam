@@ -1,13 +1,14 @@
 import Phaser from "phaser"
 import Start from "./Levels/Start";
 import Level1 from "./Levels/Level1";
+import Level2 from "./Levels/Level2";
 
 let game;
 
 const settings = {
   woolSizeX: 50,
   woolSizeY: 50,
-  basketSizeX: 400,
+  basketSizeX: 300,
   basketSizeY: 50,
 }
 
@@ -28,7 +29,7 @@ window.onload = () => {
         debug: true
       }
     },
-    scene: [Bootloader, Start, Level1]
+    scene: [Bootloader, Start, Level1, Level2]
   }
   game = new Phaser.Game(gameConfig);
   window.focus();
@@ -44,6 +45,6 @@ class Bootloader extends Phaser.Scene {
             config: game.config,
             settings: settings,
         }
-        this.scene.start("Level1", this.data)
+        this.scene.start("Level2", this.data)
     }
 }
