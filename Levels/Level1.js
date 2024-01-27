@@ -2,6 +2,7 @@ import Phaser from "phaser"
 import woolPath from "../Assets/Level1/wool.png"
 import bgPath from "../Assets/Level1/level1Background.png"
 import basketPath from "../Assets/Level1/basket.png"
+import sheepPath from "../Assets/Level1/sheepSheet.png"
 
 
 let settings;
@@ -16,7 +17,7 @@ export default class Level1 extends Phaser.Scene {
     this.load.image("woolPiece", woolPath)
     this.load.image("bg", bgPath)
     this.load.image("basket", basketPath)
-    this.load.spritesheet("lambSheet", lambPath, soldierSize);
+    this.load.spritesheet("sheepSheet", sheepPath, {frameWidth: 860, frameHeight: 555 });
   }
 
   create(data) {
@@ -26,7 +27,7 @@ export default class Level1 extends Phaser.Scene {
     this.keyLeft = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
     this.keyRight = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
 
-    this.add.image(config.width / 2, config.height / 2, "bg")
+    this.add.image(config.width / 2, config.height / 2, "bg").setDepth(0)
     this.physics.world.setBounds(0, 0, config.width, config.height);
     this.basket = this.createBasket()
 
@@ -49,7 +50,9 @@ export default class Level1 extends Phaser.Scene {
         console.log("wool caught")
         woolPiece.destroy()
       }
-  );
+    );
+
+    this.playSheepAnim(this)
   }
 
   update(time, delta) {
@@ -57,11 +60,17 @@ export default class Level1 extends Phaser.Scene {
   }
 
   spawnWool() {
-    const x = config.width*0.05 + Math.random()*config.width*0.9
+    const velocityX = -100 + Math.random()*500
     let woolPiece = this.woolPieces.get()
     if (woolPiece) {
-      woolPiece.setPosition(x, -30)
+      woolPiece.setPosition(500, 300)
       woolPiece.setSize(settings.woolSizeX, settings.woolSizeY)
+      woolPiece.body.gravity.y = 500
+      woolPiece.body.setVelocity(velocityX,-700)
+      woolPiece.setDepth(1)
+      setTimeout(() => {
+        woolPiece.setDepth(3)
+      }, 1000)
     }
   }
 
@@ -74,12 +83,27 @@ export default class Level1 extends Phaser.Scene {
     }
   }
 
+  playSheepAnim(ref) {
+    let sheep = this.add.sprite(0, 0, "sheepAnim");
+    sheep.setOrigin(0,0)
+    sheep.setDepth(2)
+    ref.anims.create({
+      key: "sheepAnim",
+      frames: this.anims.generateFrameNumbers("sheepSheet", {start: 0, end : 1}),
+      frameRate: 4,
+      repeat: -1
+    })
+    sheep.anims.play("sheepAnim")
+  }
+
   createBasket() {
-    const basket = this.physics.add.sprite(config.width/2, config.height-160, "basket");
+    const basket = this.physics.add.sprite(config.width/2, config.height-200, "basket");
     basket.setDrag(600)
     basket.setSize(settings.basketSizeX, settings.basketSizeY)
-    basket.setOffset(50,250)
+    basket.setOffset(100,250)
     basket.setCollideWorldBounds(true);
+    basket.setImmovable(true)
+    basket.setDepth(3)
     return basket
 }
 }
@@ -88,19 +112,18 @@ export default class Level1 extends Phaser.Scene {
 class WoolPiece extends Phaser.Physics.Arcade.Sprite {
   constructor (scene) {
     super(scene, 0, 0, "woolPiece")
-    this.lifespan = 5000
-    this.speed = 0.5
+    this.lifespan = 15000
     this.currentRotation = 0
-    this.setScale(2)
+    this.setScale(1.5)
   }
 
   preUpdate(time, delta) {
+    this.setScale(this.scale + 0.005)
     this.currentRotation += 0.1
     this.setRotation(this.currentRotation)
     super.preUpdate(time, delta);
     this.lifespan -= delta;
-    this.y += this.speed * delta;
-
+    
     if (this.lifespan <= 0) {
       console.log("wool destroyed")
       this.destroy();
