@@ -4,6 +4,7 @@ import ballLeftPath from "../Assets/Level2/yarnball_left.png"
 import ballRightPath from "../Assets/Level2/yarnball_right.png"
 import ballUpPath from "../Assets/Level2/yarnball_up.png"
 import bgPath from "../Assets/Level2/background.png"
+import knitPath from "../Assets/Level2/knitting.png"
 
 let settings;
 let config;
@@ -18,6 +19,7 @@ export default class Level2 extends Phaser.Scene {
       this.load.spritesheet("ballLeft", ballLeftPath, {frameWidth: 181, frameHeight: 335 })
       this.load.spritesheet("ballRight", ballRightPath, {frameWidth: 181, frameHeight: 335 })
       this.load.spritesheet("ballUp", ballUpPath, {frameWidth: 181, frameHeight: 335 })
+      this.load.spritesheet("knitSheet", knitPath, {frameWidth: 781, frameHeight: 629 })
       this.load.image("bg", bgPath)
     }
 
@@ -43,6 +45,7 @@ export default class Level2 extends Phaser.Scene {
       this.keyS.on("down", () => {this.handleKeystroke("down")})
 
       this.add.image(config.width / 2, config.height / 2, "bg").setDepth(0)
+      this.add
       this.outlineGraphics = this.add.graphics(2).setDepth(2)
       this.barGraphics = this.add.graphics().setDepth(1)
 
@@ -50,6 +53,7 @@ export default class Level2 extends Phaser.Scene {
       this.bar = this.outlineGraphics.strokeRoundedRect(1050, 40, 800, 80)
 
       this.createBallAnims()
+      this.playKnitAnim()
 
       this.yarnBalls = this.physics.add.group({
         classType: YarnBall,
@@ -167,6 +171,20 @@ export default class Level2 extends Phaser.Scene {
         yarnBall.slot = slots[slot]
         yarnBall.anims.play(animStr)
       }
+    }
+
+    playKnitAnim() {
+      let knitter = this.add.sprite();
+      knitter.setOrigin(0,0)
+      knitter.setPosition(1100, 300)
+      knitter.setDepth(2)
+      this.anims.create({
+        key: "knitAnim",
+        frames: this.anims.generateFrameNumbers("knitSheet", {start: 0, end : 1}),
+        frameRate: 4,
+        repeat: -1
+      })
+      knitter.anims.play("knitAnim")
     }
 
     triggerEnding() {
