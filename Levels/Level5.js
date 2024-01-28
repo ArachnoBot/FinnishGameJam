@@ -3,6 +3,7 @@ import retryPath from "../Assets/Level4/uudelleen.png"
 import socksPath from "../Assets/Level5/socks.png"
 import winnerPath from "../Assets/Level5/winner.png"
 import yesEnding from "../Assets/Level5/final.png"
+import kutittaaEnding from "../Assets/Level5/kutittaa.png"
 
 let settings;
 let config;
@@ -19,6 +20,7 @@ export default class Level5 extends Phaser.Scene {
       this.load.image("bg5", yesEnding)
       this.load.image("socks", socksPath)
       this.load.image("winner", winnerPath)
+      this.load.image("kutittaa", kutittaaEnding)
     }
 
     create(data) {
@@ -32,12 +34,12 @@ export default class Level5 extends Phaser.Scene {
       setTimeout(()=> {this.start=true}, 1000)
 
       setTimeout(()=> {
-        
+        this.add.image(200,200, "kutittaa").setDepth(3)
       }, 1000)
 
       setTimeout(()=> {
         this.add.image(config.width/2, config.height/2-100, "winner").setDepth(3)
-        this.retryBtn = this.add.image(config.width/2, config.height - 220, "retry").setDepth(3).setInteractive()
+        this.retryBtn = this.add.image(config.width/2, config.height - 160, "retryBtn").setDepth(3).setInteractive()
         this.retryBtn.on("pointerdown", ()=>{
           this.scene.start("Start", {config, settings})
         }, this)
