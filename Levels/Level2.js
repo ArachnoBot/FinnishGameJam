@@ -22,7 +22,7 @@ export default class Level2 extends Phaser.Scene {
       this.load.spritesheet("ballRight", ballRightPath, {frameWidth: 181, frameHeight: 335 })
       this.load.spritesheet("ballUp", ballUpPath, {frameWidth: 181, frameHeight: 335 })
       this.load.spritesheet("knitSheet", knitPath, {frameWidth: 781, frameHeight: 629 })
-      this.load.image("bg", bgPath)
+      this.load.image("bg2", bgPath)
       this.load.image("fail", failPath)
       this.load.audio('music', musicPath);
     }
@@ -51,7 +51,7 @@ export default class Level2 extends Phaser.Scene {
       music.loop = true;
       music.play();
 
-      this.add.image(config.width / 2, config.height / 2, "bg").setDepth(0)
+      this.add.image(config.width / 2, config.height / 2, "bg2").setDepth(0)
       this.outlineGraphics = this.add.graphics(2).setDepth(2)
       this.barGraphics = this.add.graphics().setDepth(1)
 
@@ -75,7 +75,10 @@ export default class Level2 extends Phaser.Scene {
       this.ballTrigger.paused = true
 
       // For delaying the start of music
-      setTimeout(()=>{this.ballTrigger.paused = false}, 300)
+      setTimeout(()=>{this.ballTrigger.paused = false}, 330)
+
+      // Restart if song ends for syncing
+      setTimeout(()=>{this.scene.restart()}, 148000)
     }
 
     update(time, delta) {

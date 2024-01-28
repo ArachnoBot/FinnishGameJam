@@ -3,7 +3,8 @@ import woolPath from "../Assets/Level1/wool.png"
 import bgPath from "../Assets/Level1/background.png"
 import basketPath from "../Assets/Level1/basket.png"
 import sheepPath from "../Assets/Level1/sheepSheet.png"
-
+import continueTextPath from "../Assets/Level1/continue.png"
+import continueBtnPath from "../Assets/Level1/continueBtn.png"
 
 let settings;
 let config;
@@ -17,6 +18,8 @@ export default class Level1 extends Phaser.Scene {
     this.load.image("woolPiece", woolPath)
     this.load.image("bg", bgPath)
     this.load.image("basket", basketPath)
+    this.load.image("continueText", continueTextPath)
+    this.load.image("continueBtn", continueBtnPath)
     this.load.spritesheet("sheepSheet", sheepPath, {frameWidth: 860, frameHeight: 555 });
   }
 
@@ -31,9 +34,10 @@ export default class Level1 extends Phaser.Scene {
 
     this.add.image(config.width / 2, config.height / 2, "bg").setDepth(0)
     this.physics.world.setBounds(0, 0, config.width, config.height);
-    let woolText = this.add.text(config.width - 600, 16, 'Wool caught: 0', { fontFamily: "Comic Sans MS", fontSize: 80, fill: '#ffffff' });
+    let woolText = this.add.text(config.width - 660, 16, 'Villaa kerätty: 0', { fontFamily: "Comic Sans MS", fontSize: 80, fill: '#ffffff' });
+    this.btn = null
     this.playSheepAnim()
-
+ 
     this.basket = this.createBasket()
     this.hitbox1 = this.createHitbox(this.basket.body.position)
     this.hitbox2 = this.createHitbox(this.basket.body.position)
@@ -56,7 +60,7 @@ export default class Level1 extends Phaser.Scene {
       (basket, woolPiece) => {
         woolCaught += 1
         woolText.text = 'Villaa kerätty: ' + woolCaught.toString()
-        if (!this.finished && woolCaught >= 10) {
+        if (!this.finished && woolCaught >= 20) {
           this.triggerEnding()
         }
         woolPiece.destroy()
@@ -72,6 +76,8 @@ export default class Level1 extends Phaser.Scene {
       this.woolPieces,
       this.hitbox2,
     );
+
+    this.triggerEnding()
   }
 
   update(time, delta) {
@@ -109,7 +115,7 @@ export default class Level1 extends Phaser.Scene {
   }
 
   playSheepAnim() {
-    let sheep = this.add.sprite(0, 0, "sheepAnim");
+    let sheep = this.add.sprite(0, 0, "sheepAnim")
     sheep.setOrigin(0,0)
     sheep.setDepth(2)
     this.anims.create({
@@ -141,9 +147,11 @@ export default class Level1 extends Phaser.Scene {
   }
 
   triggerEnding() {
-    this.woolTrigger.delay = 50
-    this.add.image(config.width / 2, config.height / 2, "woolPiece").setDepth(5).setScale(10)
     this.finished = true
+    this.woolTrigger.delay = 50
+    this.add.image(config.width / 2, config.height / 2, "continueText").setDepth(6).setScale(1)
+    const btn = this.add.image(config.width - 300, config.height - 200, "continueBtn").setDepth(6).setScale(1).setInteractive()
+    btn.on("pointerdown", ()=>{this.scene.start("Level2", {config, settings})}, this)
   }
 }
 
