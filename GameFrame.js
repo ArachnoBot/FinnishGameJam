@@ -1,8 +1,10 @@
 import Phaser from "phaser"
-import Start from "./Levels/Start";
-import Level1 from "./Levels/Level1";
-import Level2 from "./Levels/Level2";
-import Level3 from "./Levels/Level3";
+import Start from "./Levels/Start"
+import Level1 from "./Levels/Level1"
+import Level2 from "./Levels/Level2"
+import Level3 from "./Levels/Level3"
+import Level4 from "./Levels/Level4"
+import Level5 from "./Levels/Level5"
 
 let game;
 
@@ -34,7 +36,7 @@ window.onload = () => {
         debug: true
       }
     },
-    scene: [Bootloader, Start, Level1, Level2, Level3]
+    scene: [Bootloader, Start, Level1, Level2, Level3, Level4, Level5]
   }
   game = new Phaser.Game(gameConfig);
   window.focus();
@@ -50,6 +52,6 @@ class Bootloader extends Phaser.Scene {
             config: game.config,
             settings: settings,
         }
-        this.scene.start("Start", this.data)
+        this.scene.start("Level3", this.data)
     }
 }

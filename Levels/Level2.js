@@ -51,9 +51,9 @@ export default class Level2 extends Phaser.Scene {
       this.keyW.on("down", () => {this.handleKeystroke("up")})
       this.keyS.on("down", () => {this.handleKeystroke("down")})
 
-      const music = this.sound.add('music');
-      music.loop = true;
-      music.play();
+      this.music = this.sound.add('music');
+      this.music.loop = true;
+      this.music.play();
 
       this.add.image(config.width / 2, config.height / 2, "bg2").setDepth(0)
       this.outlineGraphics = this.add.graphics(2).setDepth(2)
@@ -256,6 +256,8 @@ export default class Level2 extends Phaser.Scene {
       const btn = this.add.image(config.width - 300, config.height - 200, "continueBtn").setDepth(6).setScale(1).setInteractive()
       btn.on("pointerdown", ()=>{
         this.scene.start("Level3", {config, settings})
+        this.music.destroy()
+        this.yarnBalls.clear()
       }, this)
       while(true) {
         await this.delay(100)
