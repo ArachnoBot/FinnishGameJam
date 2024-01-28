@@ -90,29 +90,15 @@ export default class Level2 extends Phaser.Scene {
         return
       }
 
-      if (this.playTime < 200) {
-        if (this.ballTrigger.delay != 573) { 
-          this.ballTrigger.delay = 573
-          console.log("low diff")
-        }
-        if (this.playTime >= 30) {
-          this.playTime -= 0.2
-        }
-      } 
-      else if (this.playTime < 400) {
-        if (this.ballTrigger.delay != 1404) { 
-          this.ballTrigger.delay = 1404
-          console.log("medium diff")
-        }
-        this.playTime -= 0.3
+      if (this.ballTrigger.delay != 573) { 
+        this.ballTrigger.delay = 573
+        console.log("low diff")
       }
-      else if (this.playTime < 800) {
-        if (this.ballTrigger.delay != 500) { 
-          this.ballTrigger.delay = 500
-          console.log("high diff")
-        }
-        this.playTime -= 0.5
+      if (this.playTime >= 30) {
+        this.playTime -= 0.2
       }
+      
+
       
       if (this.playTime > 800) {
         this.triggerEnding()
@@ -132,7 +118,7 @@ export default class Level2 extends Phaser.Scene {
         const timing = Math.abs(new Date() - ball.initTime - this.pressDelay)
         console.log(timing, ball.slot)
         if (ball.slot == slot && timing <= settings.maxDelay) {
-          this.playTime += Math.round((100-timing)*0.7)
+          this.playTime += Math.round((100-timing)*0.5)
         } else {
           if (this.playTime >= 80) {
             this.playTime -= 50
