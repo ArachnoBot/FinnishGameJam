@@ -1,5 +1,6 @@
 import Phaser from "phaser"
 import startImg from "../Assets/Start/start.png"
+import startBg from "../Assets/Start/startbackground.png"
 
 let settings;
 let config;
@@ -12,15 +13,17 @@ export default class Start extends Phaser.Scene {
 
     preload() {
       this.load.image('start', startImg)
+      this.load.image('startbg', startBg)
     }
 
     create(data) {
       config = data.config
       settings = data.settings
 
-      const image = this.add.sprite(config.width/2, config.height/2, 'start').setInteractive()
-      image.setScale(0.2)
-      image.on("pointerdown", this.handleStartClick, this)
+      this.add.image(config.width / 2, config.height / 2, "startbg").setDepth(0)
+      const start = this.add.image(config.width/2, config.height/2, 'start').setInteractive().setDepth(1)
+      start.setScale(0.6).setPosition(1400,800)
+      start.on("pointerdown", this.handleStartClick, this)
     }
 
     update(time, delta) {

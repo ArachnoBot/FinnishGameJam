@@ -5,6 +5,7 @@ import basketPath from "../Assets/Level1/basket.png"
 import sheepPath from "../Assets/Level1/sheepSheet.png"
 import continueTextPath from "../Assets/Level1/continue.png"
 import continueBtnPath from "../Assets/Level1/continueBtn.png"
+const musicPath2 = require("url:../Assets/Level1/elevator.mp3")
 
 let settings;
 let config;
@@ -20,7 +21,8 @@ export default class Level1 extends Phaser.Scene {
     this.load.image("basket", basketPath)
     this.load.image("continueText", continueTextPath)
     this.load.image("continueBtn", continueBtnPath)
-    this.load.spritesheet("sheepSheet", sheepPath, {frameWidth: 860, frameHeight: 555 });
+    this.load.spritesheet("sheepSheet", sheepPath, {frameWidth: 860, frameHeight: 555 })
+    this.load.audio('music2', musicPath2)
   }
 
   create(data) {
@@ -38,6 +40,10 @@ export default class Level1 extends Phaser.Scene {
     this.btn = null
     this.playSheepAnim()
  
+    this.music = this.sound.add('music2');
+    this.music.loop = true;
+    this.music.play();
+
     this.basket = this.createBasket()
     this.hitbox1 = this.createHitbox(this.basket.body.position)
     this.hitbox2 = this.createHitbox(this.basket.body.position)
@@ -76,8 +82,6 @@ export default class Level1 extends Phaser.Scene {
       this.woolPieces,
       this.hitbox2,
     );
-
-    this.triggerEnding()
   }
 
   update(time, delta) {
@@ -151,7 +155,10 @@ export default class Level1 extends Phaser.Scene {
     this.woolTrigger.delay = 50
     this.add.image(config.width / 2, config.height / 2, "continueText").setDepth(6).setScale(1)
     const btn = this.add.image(config.width - 300, config.height - 200, "continueBtn").setDepth(6).setScale(1).setInteractive()
-    btn.on("pointerdown", ()=>{this.scene.start("Level2", {config, settings})}, this)
+    btn.on("pointerdown", ()=>{
+      this.scene.start("Level2", {config, settings})
+      this.music.destroy()
+    }, this)
   }
 }
 

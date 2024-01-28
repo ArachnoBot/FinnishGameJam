@@ -2,7 +2,7 @@ import Phaser from "phaser"
 import retryPath from "../Assets/Level4/uudelleen.png"
 import socksPath from "../Assets/Level5/socks.png"
 import winnerPath from "../Assets/Level5/winner.png"
-import yesEnding from "../Assets/Level5/final.png"
+import yesEnding from "../Assets/Level5/finalFrame.png"
 import kutittaaEnding from "../Assets/Level5/kutittaa.png"
 
 let settings;
@@ -35,7 +35,7 @@ export default class Level5 extends Phaser.Scene {
 
       setTimeout(()=> {
         this.add.image(200,200, "kutittaa").setDepth(3)
-      }, 1000)
+      }, 3000)
 
       setTimeout(()=> {
         this.add.image(config.width/2, config.height/2-100, "winner").setDepth(3)
@@ -43,9 +43,9 @@ export default class Level5 extends Phaser.Scene {
         this.retryBtn.on("pointerdown", ()=>{
           this.scene.start("Start", {config, settings})
         }, this)
-      },3000)
+      },4000)
     }
-
+    
     update(time, delta) {
       console.log(this.socks.x)
       if (this.socks.x < 900 && this.start) {
