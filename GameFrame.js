@@ -52,6 +52,6 @@ class Bootloader extends Phaser.Scene {
             config: game.config,
             settings: settings,
         }
-        this.scene.start("Level3", this.data)
+        this.scene.start("Level5", this.data)
     }
 }
