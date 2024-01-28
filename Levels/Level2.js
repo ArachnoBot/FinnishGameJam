@@ -5,6 +5,8 @@ import ballRightPath from "../Assets/Level2/yarnball_right.png"
 import ballUpPath from "../Assets/Level2/yarnball_up.png"
 import bgPath from "../Assets/Level2/background.png"
 import knitPath from "../Assets/Level2/knitting.png"
+import failPath from "../Assets/Level2/fail.png"
+const musicPath = require("url:../Assets/Level2/FrigidFortress.mp3")
 
 let settings;
 let config;
@@ -21,6 +23,8 @@ export default class Level2 extends Phaser.Scene {
       this.load.spritesheet("ballUp", ballUpPath, {frameWidth: 181, frameHeight: 335 })
       this.load.spritesheet("knitSheet", knitPath, {frameWidth: 781, frameHeight: 629 })
       this.load.image("bg", bgPath)
+      this.load.image("fail", failPath)
+      this.load.audio('music', musicPath);
     }
 
     create(data) {
@@ -31,7 +35,7 @@ export default class Level2 extends Phaser.Scene {
       this.playTime = 30
       this.finished = false
       this.ballArray = []
-      this.pressDelay = 800
+      this.pressDelay = 780
 
       this.keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
       this.keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
@@ -42,6 +46,10 @@ export default class Level2 extends Phaser.Scene {
       this.keyD.on("down", () => {this.handleKeystroke("right")})
       this.keyW.on("down", () => {this.handleKeystroke("up")})
       this.keyS.on("down", () => {this.handleKeystroke("down")})
+
+      const music = this.sound.add('music');
+      music.loop = true;
+      music.play();
 
       this.add.image(config.width / 2, config.height / 2, "bg").setDepth(0)
       this.outlineGraphics = this.add.graphics(2).setDepth(2)
@@ -61,19 +69,23 @@ export default class Level2 extends Phaser.Scene {
       this.ballTrigger = this.time.addEvent({
         callback: this.spawnBall,
         callbackScope: this,
-        delay: 1000,
+        delay: 573,
         loop: true
       })
+      this.ballTrigger.paused = true
+
+      // For delaying the start of music
+      setTimeout(()=>{this.ballTrigger.paused = false}, 300)
     }
 
     update(time, delta) {
-      if (this.finished) {
+      if (this.finished || !this.ballTrigger) {
         return
       }
 
       if (this.playTime < 200) {
-        if (this.ballTrigger.delay != 1000) { 
-          this.ballTrigger.delay = 1000
+        if (this.ballTrigger.delay != 573) { 
+          this.ballTrigger.delay = 573
           console.log("low diff")
         }
         if (this.playTime >= 30) {
@@ -81,8 +93,8 @@ export default class Level2 extends Phaser.Scene {
         }
       } 
       else if (this.playTime < 400) {
-        if (this.ballTrigger.delay != 700) { 
-          this.ballTrigger.delay = 700
+        if (this.ballTrigger.delay != 1404) { 
+          this.ballTrigger.delay = 1404
           console.log("medium diff")
         }
         this.playTime -= 0.3
@@ -113,13 +125,15 @@ export default class Level2 extends Phaser.Scene {
         const timing = Math.abs(new Date() - ball.initTime - this.pressDelay)
         console.log(timing, ball.slot)
         if (ball.slot == slot && timing <= settings.maxDelay) {
-          this.playTime += Math.round((100-timing)*5.5)
+          this.playTime += Math.round((100-timing)*0.1)
         } else {
           if (this.playTime >= 80) {
             this.playTime -= 50
           }
           this.knitter.anims.pause()
+          const fail = this.addFailImg()
           setTimeout(() => {
+            fail.destroy()
             this.knitter.anims.resume()
           }, 800)
         }
@@ -210,12 +224,24 @@ export default class Level2 extends Phaser.Scene {
       return knitter
     }
 
+    addFailImg() {
+      const img = this.add.image(1150,350,"fail")
+      img.setDepth(4)
+      img.setScale(0.7)
+      img.setRotation(-0.4)
+      return img
+    }
+
     delay = (delayInms) => {
       return new Promise(resolve => setTimeout(resolve, delayInms));
-    };
+    }
 
     async triggerEnding() {
       this.ballTrigger.destroy()
+      this.keyA.destroy()
+      this.keyD.destroy()
+      this.keyS.destroy()
+      this.keyW.destroy()
       this.finished = true
       this.reverse = false
       let slot = 0

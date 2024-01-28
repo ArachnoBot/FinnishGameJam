@@ -31,7 +31,7 @@ export default class Level1 extends Phaser.Scene {
 
     this.add.image(config.width / 2, config.height / 2, "bg").setDepth(0)
     this.physics.world.setBounds(0, 0, config.width, config.height);
-    let woolText = this.add.text(config.width - 600, 16, 'Wool caught: 0', { fontFamily: "Georgia", fontSize: 80, fill: '#ffffff' });
+    let woolText = this.add.text(config.width - 600, 16, 'Wool caught: 0', { fontFamily: "Comic Sans MS", fontSize: 80, fill: '#ffffff' });
     this.playSheepAnim()
 
     this.basket = this.createBasket()
@@ -55,14 +55,14 @@ export default class Level1 extends Phaser.Scene {
       this.basket,
       (basket, woolPiece) => {
         woolCaught += 1
-        woolText.text = 'Wool caught: ' + woolCaught.toString()
+        woolText.text = 'Villaa kerätty: ' + woolCaught.toString()
         if (!this.finished && woolCaught >= 10) {
           this.triggerEnding()
         }
         woolPiece.destroy()
       }
     );
-
+    
     this.physics.add.collider(
       this.woolPieces,
       this.hitbox1,
@@ -79,7 +79,6 @@ export default class Level1 extends Phaser.Scene {
       this.basketController(delta)
     }
     const newPosX = this.basket.body.position.x
-    console.log(newPosX)
     this.hitbox1.setPosition(newPosX - 50, 940)
     this.hitbox2.setPosition(newPosX + 360, 940)
   }

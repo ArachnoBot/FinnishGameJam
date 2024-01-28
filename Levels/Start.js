@@ -29,6 +29,6 @@ export default class Start extends Phaser.Scene {
 
     handleStartClick() {
       console.log("start clicked")
-      this.scene.start("Level1", {config, settings});
+      this.scene.start("Level2", {config, settings});
     }
 }

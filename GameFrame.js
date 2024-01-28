@@ -22,6 +22,9 @@ window.onload = () => {
       width: 1920,
       height: 1080,
     },
+    audio: {
+      disableWebAudio: true
+    },
     pixelArt: true,
     backgroundColor: "#808080",
     physics: {
@@ -46,6 +49,6 @@ class Bootloader extends Phaser.Scene {
             config: game.config,
             settings: settings,
         }
-        this.scene.start("Level2", this.data)
+        this.scene.start("Start", this.data)
     }
 }
