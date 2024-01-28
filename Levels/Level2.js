@@ -132,7 +132,7 @@ export default class Level2 extends Phaser.Scene {
         const timing = Math.abs(new Date() - ball.initTime - this.pressDelay)
         console.log(timing, ball.slot)
         if (ball.slot == slot && timing <= settings.maxDelay) {
-          this.playTime += Math.round((100-timing)*10.1)
+          this.playTime += Math.round((100-timing)*0.7)
         } else {
           if (this.playTime >= 80) {
             this.playTime -= 50
