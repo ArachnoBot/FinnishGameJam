@@ -4,9 +4,9 @@ let settings;
 let config;
 
 
-export default class LevelX extends Phaser.Scene {
+export default class Level3 extends Phaser.Scene {
     constructor() {
-        super("LevelX")
+        super("Level3")
     }
 
     preload() {

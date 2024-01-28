@@ -6,6 +6,8 @@ import ballUpPath from "../Assets/Level2/yarnball_up.png"
 import bgPath from "../Assets/Level2/background.png"
 import knitPath from "../Assets/Level2/knitting.png"
 import failPath from "../Assets/Level2/fail.png"
+import continueTextPath from "../Assets/Level2/continue2.png"
+import continueBtnPath from "../Assets/Level2/continueBtn.png"
 const musicPath = require("url:../Assets/Level2/FrigidFortress.mp3")
 
 let settings;
@@ -22,6 +24,8 @@ export default class Level2 extends Phaser.Scene {
       this.load.spritesheet("ballRight", ballRightPath, {frameWidth: 181, frameHeight: 335 })
       this.load.spritesheet("ballUp", ballUpPath, {frameWidth: 181, frameHeight: 335 })
       this.load.spritesheet("knitSheet", knitPath, {frameWidth: 781, frameHeight: 629 })
+      this.load.image("continueText2", continueTextPath)
+      this.load.image("continueBtn", continueBtnPath)
       this.load.image("bg2", bgPath)
       this.load.image("fail", failPath)
       this.load.audio('music', musicPath);
@@ -128,7 +132,7 @@ export default class Level2 extends Phaser.Scene {
         const timing = Math.abs(new Date() - ball.initTime - this.pressDelay)
         console.log(timing, ball.slot)
         if (ball.slot == slot && timing <= settings.maxDelay) {
-          this.playTime += Math.round((100-timing)*0.1)
+          this.playTime += Math.round((100-timing)*10.1)
         } else {
           if (this.playTime >= 80) {
             this.playTime -= 50
@@ -248,6 +252,11 @@ export default class Level2 extends Phaser.Scene {
       this.finished = true
       this.reverse = false
       let slot = 0
+      this.add.image(config.width / 2, config.height / 2, "continueText2").setDepth(6).setScale(1)
+      const btn = this.add.image(config.width - 300, config.height - 200, "continueBtn").setDepth(6).setScale(1).setInteractive()
+      btn.on("pointerdown", ()=>{
+        this.scene.start("Level3", {config, settings})
+      }, this)
       while(true) {
         await this.delay(100)
         this.spawnBall(slot)
@@ -257,7 +266,6 @@ export default class Level2 extends Phaser.Scene {
         else if (slot == 0) {
           this.reverse = false
         }
-
         if (this.reverse) {
           slot -= 1
         } else {

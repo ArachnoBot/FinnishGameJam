@@ -2,6 +2,7 @@ import Phaser from "phaser"
 import Start from "./Levels/Start";
 import Level1 from "./Levels/Level1";
 import Level2 from "./Levels/Level2";
+import Level3 from "./Levels/Level3";
 
 let game;
 
@@ -33,7 +34,7 @@ window.onload = () => {
         debug: true
       }
     },
-    scene: [Bootloader, Start, Level1, Level2]
+    scene: [Bootloader, Start, Level1, Level2, Level3]
   }
   game = new Phaser.Game(gameConfig);
   window.focus();
